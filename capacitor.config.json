@@ -1,0 +1,60 @@
+{
+  "appId": "com.redescobrindosentido.app",
+  "appName": "Sentido da Vida",
+  "webDir": "app",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": []
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2500,
+      "launchAutoHide": true,
+      "backgroundColor": "#0f0f1a",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true,
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#6C63FF"
+    },
+    "StatusBar": {
+      "style": "Dark",
+      "backgroundColor": "#0f0f1a",
+      "overlaysWebView": false
+    },
+    "Keyboard": {
+      "resize": "body",
+      "style": "dark",
+      "resizeOnFullScreen": true
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#6C63FF",
+      "sound": "beep.wav"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "loggingBehavior": "none",
+    "buildOptions": {
+      "keystorePath": "release.keystore",
+      "keystoreAlias": "sentidodavida",
+      "releaseType": "AAB"
+    }
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": false,
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": true,
+    "preferredContentMode": "mobile"
+  }
+}

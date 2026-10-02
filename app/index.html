@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Redescobrindo o Sentido da Vida</title>
+
+<!-- ===== PWA META TAGS ===== -->
+<meta name="description" content="Programa de 7 semanas baseado na Logoterapia de Viktor Frankl para redescobrir o propósito e o sentido da vida."/>
+<meta name="keywords" content="logoterapia, Viktor Frankl, sentido da vida, propósito, psicologia positiva, TCC, autoconhecimento"/>
+<meta name="author" content="Redescobrindo o Sentido da Vida"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Sentido da Vida"/>
+<meta name="application-name" content="Sentido da Vida"/>
+<meta name="msapplication-TileColor" content="#0f0f1a"/>
+<meta name="msapplication-TileImage" content="icons/icon-144.png"/>
+<meta name="theme-color" content="#6C63FF"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Redescobrindo o Sentido da Vida"/>
+<meta property="og:description" content="Programa de 7 semanas baseado na Logoterapia de Viktor Frankl, Psicologia Positiva, Neurociência e TCC."/>
+<meta property="og:image" content="icons/icon-512.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json"/>
+
+<!-- Favicons e Apple Icons -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"/>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png"/>
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png"/>
+
+<!-- Apple Splash Screens -->
+<link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width:414px) and (device-height:736px) and (-webkit-device-pixel-ratio:3)"/>
+<link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)"/>
+<link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width:320px) and (device-height:568px) and (-webkit-device-pixel-ratio:2)"/>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+
+<!-- Styles -->
+<link href="style.css" rel="stylesheet"/>
+
+<!-- Safe area insets (notch / Dynamic Island) -->
+<style>
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+  #topbar { padding-top: calc(0px + var(--safe-top)); height: calc(64px + var(--safe-top)); }
+  #sidebar { padding-top: var(--safe-top); }
+  #sidebar-toggle { bottom: calc(24px + var(--safe-bottom)); left: calc(24px + var(--safe-left)); }
+  #toast-container { bottom: calc(24px + var(--safe-bottom)); right: calc(24px + var(--safe-right)); }
+</style>
+</head>
+<body>
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- SIDEBAR -->
+<div id="sidebar">
+<div class="sidebar-header">
+<div class="sidebar-logo">
+<div class="sidebar-logo-icon">🌟</div>
+<div>
+<div class="sidebar-logo-text">Redescobrindo o<br/>Sentido da Vida</div>
+<div class="sidebar-logo-sub">Logoterapia · Viktor Frankl</div>
+</div>
+</div>
+<div class="sidebar-user" onclick="openSetupModal()">
+<div class="sidebar-user-name" id="sidebar-user-name">Participante</div>
+<div class="sidebar-user-date" id="sidebar-user-date">Configure seu perfil ✏️</div>
+</div>
+</div>
+<nav class="sidebar-nav" id="sidebar-nav">
+<!-- Populated by JS -->
+</nav>
+<div class="sidebar-progress">
+<div class="sidebar-progress-label">
+<span>Progresso Total</span>
+<span id="sidebar-progress-pct">0%</span>
+</div>
+<div class="progress-bar-wrap">
+<div class="progress-bar-fill" id="sidebar-progress-fill" style="width:0%"></div>
+</div>
+<div id="sidebar-progress-done" style="font-size:11px;color:var(--text3);margin-top:6px">0/0 tarefas</div>
+</div>
+</div>
+<!-- MAIN -->
+<div id="main">
+<!-- TOPBAR -->
+<div id="topbar">
+<div>
+<div class="topbar-title" id="topbar-title">Painel Principal</div>
+<div class="topbar-subtitle" id="topbar-subtitle">Visão geral da sua jornada</div>
+</div>
+<div class="topbar-actions">
+<button class="btn btn-ghost" onclick="openSetupModal()">⚙️ Perfil</button>
+<button class="btn btn-ghost" onclick="generatePDFReport()" title="Exportar relatório completo em PDF">📄 Exportar PDF</button>
+<button class="btn btn-primary" onclick="navigate('module', 1)">▶ Continuar</button>
+</div>
+</div>
+<!-- PAGE CONTENT -->
+<div id="page-content">
+<!-- ===== DASHBOARD VIEW ===== -->
+<div class="view active" id="view-dashboard">
+<div class="dashboard-hero">
+<div class="hero-quote">"A última das liberdades humanas é a de escolher a própria atitude em qualquer conjunto de circunstâncias."</div>
+<div class="hero-author">— Viktor Frankl</div>
+<div class="hero-stats">
+<div class="hero-stat">
+<div class="hero-stat-value" id="dash-total-pct">0%</div>
+<div class="hero-stat-label">Progresso Total</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value" id="dash-modules-done">0</div>
+<div class="hero-stat-label">Módulos Concluídos</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value" id="dash-weeks-active">0</div>
+<div class="hero-stat-label">Semanas em Jornada</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value" id="dash-pre-score">—</div>
+<div class="hero-stat-label">Sentido de Vida (Pré)</div>
+</div>
+</div>
+</div>
+<!-- Thermometer -->
+<div class="thermometer-section">
+<div class="thermometer-title">🌡️ Termômetro de Sentido de Vida</div>
+<div class="thermometer-desc">Avalie seu senso geral de sentido de vida antes de iniciar e ao final de cada módulo (1 = vazio total · 10 = pleno de sentido).</div>
+<div class="thermometer-grid" id="thermometer-grid">
+<!-- Populated by JS -->
+</div>
+</div>
+<!-- Modules Grid -->
+<div class="section-header">
+<div>
+<div class="section-title">Os 7 Módulos da Jornada</div>
+<div class="section-subtitle">Programa de 7 semanas de autodescoberta existencial</div>
+</div>
+</div>
+<div class="modules-grid" id="modules-grid">
+<!-- Populated by JS -->
+</div>
+<!-- Scientific Foundation -->
+<div class="concept-box" style="margin-top:8px">
+<div class="concept-box-title">🧠 Fundamento Científico</div>
+<div class="concept-box-text">
+          Estudos recentes demonstram que a percepção de significado na vida está associada a uma <strong>redução de 15% no risco de mortalidade</strong> por todas as causas (UK Biobank, N=153.505). O sentido de vida correlaciona-se inversamente com depressão, ansiedade, ideação suicida e burnout existencial. Este programa integra <strong>Logoterapia de Viktor Frankl</strong>, <strong>Psicologia Positiva</strong>, <strong>Neurociência</strong> e <strong>TCC</strong> em uma jornada estruturada de 7 semanas.
+        </div>
+</div>
+</div><!-- /view-dashboard -->
+<!-- ===== MODULE VIEW ===== -->
+<div class="view" id="view-module">
+<div class="module-view-header" id="mod-header">
+<div class="module-view-week" id="mod-week">Semana 1</div>
+<div class="module-view-title" id="mod-title">Módulo</div>
+<div class="module-view-subtitle" id="mod-subtitle">Subtítulo</div>
+<div class="module-view-quote" id="mod-quote"></div>
+<div class="module-view-progress">
+<div class="progress-bar-wrap" style="flex:1">
+<div class="progress-bar-fill" id="mod-progress-fill" style="width:0%"></div>
+</div>
+<div class="module-view-progress-text" id="mod-progress-text">0%</div>
+</div>
+</div>
+<!-- Concept -->
+<div id="mod-concept"></div>
+<!-- Exercises -->
+<div class="section-header">
+<div class="section-title">📝 Exercícios Práticos</div>
+</div>
+<div id="mod-exercises"></div>
+<!-- Checklist -->
+<div id="mod-checklist"></div>
+<!-- Navigation -->
+<div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+<button class="btn btn-ghost" onclick="navigate('dashboard')">← Voltar ao Painel</button>
+<button class="btn btn-primary" id="mod-next-btn" onclick="goNextModule()">Próximo Módulo →</button>
+</div>
+</div><!-- /view-module -->
+<!-- ===== PROGRESS VIEW ===== -->
+<div class="view" id="view-progress">
+<div class="progress-overview">
+<div class="progress-stat-card">
+<div class="progress-stat-value" id="prog-total-pct">0%</div>
+<div class="progress-stat-label">Progresso Total do Programa</div>
+<div class="progress-stat-bar">
+<div class="progress-bar-wrap" style="margin-top:12px">
+<div class="progress-bar-fill" id="prog-total-bar" style="width:0%"></div>
+</div>
+</div>
+</div>
+<div class="progress-stat-card">
+<div class="progress-stat-value" id="prog-modules-done">0/7</div>
+<div class="progress-stat-label">Módulos Concluídos</div>
+</div>
+<div class="progress-stat-card">
+<div class="progress-stat-value" id="prog-checklist-done">0/0</div>
+<div class="progress-stat-label">Tarefas do Checklist</div>
+</div>
+</div>
+<!-- Evolution Chart -->
+<div class="evolution-chart">
+<div class="chart-title">📈 Evolução do Sentido de Vida</div>
+<div id="evolution-chart">
+<div class="empty-state">
+<div class="empty-state-icon">📊</div>
+<div class="empty-state-text">Avalie seu sentido de vida no Termômetro para ver o gráfico de evolução.</div>
+</div>
+</div>
+</div>
+<!-- Module Progress Bars -->
+<div class="section-header">
+<div class="section-title">Progresso por Módulo</div>
+</div>
+<div id="prog-module-bars"></div>
+<!-- Export Button -->
+<div style="margin-top:32px;padding:28px;background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(247,183,49,0.06));border:1px solid rgba(108,99,255,0.2);border-radius:var(--radius);text-align:center">
+<div style="font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px">📄 Exportar Relatório Completo</div>
+<div style="font-size:13px;color:var(--text3);margin-bottom:20px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7">
+    Gere um PDF completo com todas as suas respostas, evolução do Termômetro de Sentido de Vida, checklists por módulo, Diário Semanal e Manifesto de Vida.
+  </div>
+<button class="btn btn-primary" onclick="generatePDFReport()" style="font-size:15px;padding:12px 28px">
+    📄 Gerar Relatório em PDF
+  </button>
+<div style="font-size:11px;color:var(--text3);margin-top:12px">
+    Uma nova janela será aberta. Use <strong>Ctrl+P</strong> (ou <strong>Cmd+P</strong> no Mac) → <em>"Salvar como PDF"</em>
+</div>
+</div>
+</div><!-- /view-progress -->
+<!-- ===== DIARY VIEW ===== -->
+<div class="view" id="view-diary">
+<div class="concept-box" style="margin-bottom:24px">
+<div class="concept-box-title">📔 Diário de Reflexões Semanais</div>
+<div class="concept-box-text">Ao final de cada semana/módulo, registre sua principal descoberta e um compromisso de ação. Este diário é o registro vivo da sua transformação.</div>
+</div>
+<div id="diary-cards">
+<!-- Populated by JS -->
+</div>
+</div><!-- /view-diary -->
+<!-- ===== MANIFESTO VIEW ===== -->
+<div class="view" id="view-manifesto">
+<div class="concept-box" style="margin-bottom:24px">
+<div class="concept-box-title">✍️ Seu Manifesto de Vida</div>
+<div class="concept-box-text">O Manifesto de Vida é sua declaração pessoal de sentido — um documento vivo que expressa quem você é, o que valoriza, para onde vai e como quer ser lembrado(a). Escreva com o coração.</div>
+</div>
+<div id="manifesto-content">
+<!-- Populated by JS -->
+</div>
+</div><!-- /view-manifesto -->
+<!-- ===== CERTIFICATE VIEW ===== -->
+<div class="view" id="view-certificate">
+<div id="certificate-content">
+<!-- Populated by JS -->
+</div>
+</div><!-- /view-certificate -->
+</div><!-- /page-content -->
+</div><!-- /main -->
+<!-- MOBILE TOGGLE -->
+<button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+<!-- SETUP MODAL -->
+<div class="modal-overlay" id="setup-modal">
+<div class="modal">
+<div class="modal-title">🌟 Configure seu Perfil</div>
+<div class="modal-text">Personalize sua jornada de autodescoberta. Estas informações ficam salvas apenas no seu dispositivo.</div>
+<div class="form-group">
+<label class="form-label">Seu Nome *</label>
+<input id="setup-name" placeholder="Como você gostaria de ser chamado(a)?" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Data de Início do Programa</label>
+<input id="setup-date" type="date"/>
+</div>
+<div class="form-group">
+<label class="form-label">Minha Intenção para este Programa</label>
+<textarea id="setup-intention" placeholder="O que você espera descobrir ou transformar ao longo desta jornada?" rows="3"></textarea>
+</div>
+<div class="modal-actions">
+<button class="btn btn-ghost" onclick="closeSetupModal()">Cancelar</button>
+<button class="btn btn-primary" onclick="saveSetup()">✓ Salvar e Começar</button>
+</div>
+</div>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="pdf-export.js"></script>
+<script>
+// Extra helpers defined after app.js loads
+function goNextModule() {
+  const current = state.currentModule;
+  if (current < 7) {
+    const next = current + 1;
+    if (isModuleUnlocked(next)) {
+      navigate('module', next);
+    } else {
+      showToast('Complete o checklist deste módulo para desbloquear o próximo.', 'info');
+    }
+  } else {
+    navigate('certificate');
+  }
+}
+
+// Pre-fill setup modal with existing data
+document.getElementById('setup-modal').addEventListener('transitionend', function() {
+  if (this.classList.contains('open')) {
+    const nameEl = document.getElementById('setup-name');
+    const dateEl = document.getElementById('setup-date');
+    const intentionEl = document.getElementById('setup-intention');
+    if (nameEl && state.userName) nameEl.value = state.userName;
+    if (dateEl && state.startDate) dateEl.value = state.startDate;
+    if (intentionEl && state.intention) intentionEl.value = state.intention;
+  }
+});
+
+// Also fill on open
+const origOpen = openSetupModal;
+window.openSetupModal = function() {
+  origOpen();
+  setTimeout(() => {
+    const nameEl = document.getElementById('setup-name');
+    const dateEl = document.getElementById('setup-date');
+    const intentionEl = document.getElementById('setup-intention');
+    if (nameEl && state.userName) nameEl.value = state.userName;
+    if (dateEl && state.startDate) dateEl.value = state.startDate;
+    if (intentionEl && state.intention) intentionEl.value = state.intention;
+  }, 50);
+};
+
+// Update progress bar in progress view
+const origRenderProgress = renderProgress;
+window.renderProgress = function() {
+  origRenderProgress();
+  const prog = getTotalProgress();
+  const bar = document.getElementById('prog-total-bar');
+  if (bar) bar.style.width = prog.pct + '%';
+};
+
+// Close modal on overlay click
+document.getElementById('setup-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSetupModal();
+});
+
+// Keyboard shortcut: Escape closes modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSetupModal();
+});
+</script>
+
+<!-- ===== PWA: SERVICE WORKER REGISTRATION ===== -->
+<script>
+(function() {
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(function(reg) {
+          console.log('[PWA] Service Worker registered:', reg.scope);
+
+          // Check for updates
+          reg.addEventListener('updatefound', function() {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', function() {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showPWAUpdateBanner();
+              }
+            });
+          });
+        })
+        .catch(function(err) {
+          console.warn('[PWA] Service Worker registration failed:', err);
+        });
+
+      // Handle controller change (after update)
+      navigator.serviceWorker.addEventListener('controllerchange', function() {
+        window.location.reload();
+      });
+    });
+  }
+
+  // ── Install Prompt (Android / Chrome) ──────────────────────────────────────
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallBanner();
+  });
+
+  window.addEventListener('appinstalled', function() {
+    deferredPrompt = null;
+    hideInstallBanner();
+    console.log('[PWA] App installed successfully!');
+  });
+
+  // ── Install Banner ──────────────────────────────────────────────────────────
+  function showInstallBanner() {
+    if (document.getElementById('pwa-install-banner')) return;
+    if (localStorage.getItem('pwa_install_dismissed')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'pwa-install-banner';
+    banner.innerHTML = `
+      <div style="
+        position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+        background:#1e1e35; border:1px solid rgba(108,99,255,0.4);
+        border-radius:16px; padding:16px 20px; z-index:9998;
+        display:flex; align-items:center; gap:14px;
+        box-shadow:0 8px 32px rgba(0,0,0,0.5); max-width:340px; width:90%;
+        animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+      ">
+        <img src="icons/icon-72.png" style="width:44px;height:44px;border-radius:10px;flex-shrink:0"/>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:#e8e8f0;margin-bottom:2px">Instalar o App</div>
+          <div style="font-size:11px;color:#a0a0c0;line-height:1.4">Acesse offline e tenha a melhor experiência</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button onclick="triggerInstall()" style="
+            background:#6C63FF;color:#fff;border:none;border-radius:8px;
+            padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap
+          ">Instalar</button>
+          <button onclick="dismissInstallBanner()" style="
+            background:transparent;color:#6060a0;border:none;
+            font-size:11px;cursor:pointer;padding:2px
+          ">Agora não</button>
+        </div>
+      </div>
+      <style>
+        @keyframes slideUp { from { transform:translateX(-50%) translateY(20px); opacity:0; } to { transform:translateX(-50%) translateY(0); opacity:1; } }
+      </style>
+    `;
+    document.body.appendChild(banner);
+  }
+
+  function hideInstallBanner() {
+    const b = document.getElementById('pwa-install-banner');
+    if (b) b.remove();
+  }
+
+  window.triggerInstall = function() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result) {
+      if (result.outcome === 'accepted') console.log('[PWA] User accepted install');
+      deferredPrompt = null;
+      hideInstallBanner();
+    });
+  };
+
+  window.dismissInstallBanner = function() {
+    hideInstallBanner();
+    localStorage.setItem('pwa_install_dismissed', '1');
+  };
+
+  // ── Update Banner ───────────────────────────────────────────────────────────
+  function showPWAUpdateBanner() {
+    if (document.getElementById('pwa-update-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'pwa-update-banner';
+    banner.innerHTML = `
+      <div style="
+        position:fixed; top:0; left:0; right:0; z-index:9999;
+        background:#6C63FF; color:#fff; padding:12px 20px;
+        display:flex; align-items:center; justify-content:space-between;
+        font-size:13px; font-weight:600;
+      ">
+        <span>🔄 Nova versão disponível!</span>
+        <button onclick="applyPWAUpdate()" style="
+          background:rgba(255,255,255,0.2); color:#fff; border:none;
+          border-radius:8px; padding:6px 14px; font-size:12px;
+          font-weight:700; cursor:pointer;
+        ">Atualizar agora</button>
+      </div>
+    `;
+    document.body.appendChild(banner);
+  }
+
+  window.applyPWAUpdate = function() {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+    }
+  };
+
+  // ── Offline / Online detection ──────────────────────────────────────────────
+  function updateOnlineStatus() {
+    const isOnline = navigator.onLine;
+    let indicator = document.getElementById('pwa-offline-indicator');
+    if (!isOnline) {
+      if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'pwa-offline-indicator';
+        indicator.innerHTML = `
+          <div style="
+            position:fixed; top:0; left:0; right:0; z-index:9997;
+            background:#EF4444; color:#fff; text-align:center;
+            padding:8px; font-size:12px; font-weight:700;
+          ">📵 Você está offline — seus dados continuam salvos localmente</div>
+        `;
+        document.body.appendChild(indicator);
+      }
+    } else {
+      if (indicator) indicator.remove();
+    }
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+
+  // ── Deep link handling (shortcuts) ─────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
+    if (view && ['module', 'diary', 'progress', 'manifesto', 'certificate'].includes(view)) {
+      // Will be handled after app init
+      window._pwaDeepLinkView = view;
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
