@@ -780,5 +780,6 @@ function generatePDFReport() {
   }
   win.document.write(html);
   win.document.close();
+  if (typeof unlockAchievement === 'function') unlockAchievement('pdf_exported');
   showToast('📄 Relatório gerado! Use Ctrl+P / Cmd+P → "Salvar como PDF".', 'success');
 }
