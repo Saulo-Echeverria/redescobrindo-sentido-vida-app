@@ -315,8 +315,8 @@ function unlockAchievement(triggerId) {
 
 // ── Verificar e disparar conquistas ─────────────────────────────────────────
 function checkAchievements() {
-  if (!window.state) return;
-  const s = window.state;
+  if (typeof state === 'undefined') return;
+  const s = state;
 
   // Setup feito
   if (s.setupDone) unlockAchievement('setup_done');
@@ -399,8 +399,70 @@ function checkAchievements() {
   const gratitudeDays = practiceData[0] ? Object.values(practiceData[0]).filter(Boolean).length : 0;
   if (gratitudeDays >= 5) unlockAchievement('gratitude_5_days');
 
+  // Três módulos concluídos dentro de uma janela de sete dias.
+  const completionTimes = PROGRAM_DATA.modules
+    .filter(module => {
+      const checks = s.checklists && s.checklists[module.id];
+      return checks && checks.length === module.checklist.length && checks.every(Boolean);
+    })
+    .map(module => Date.parse(((s.moduleDates || {})[module.id] || {}).end || ''))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
+  const completedThreeInAWeek = completionTimes.some((start, index) =>
+    completionTimes.slice(index + 1).filter(end => end - start < 7 * 86400000).length >= 2
+  );
+  if (completedThreeInAWeek) unlockAchievement('three_modules_7_days');
+
+  if (PROGRAM_DATA && PROGRAM_DATA.modules.some(hasDeepAnswers)) {
+    unlockAchievement('deep_answers_module');
+  }
+
   // Atualizar streak
   updateStreak();
+}
+
+function hasDeepAnswers(module) {
+  const wordCount = text => String(text || '').trim().split(/\s+/).filter(Boolean).length;
+  const isLongAnswer = text => wordCount(text) > 50;
+
+  const checks = module.exercises.map(exercise => {
+    const response = (state.exercises || {})[exercise.id] || {};
+    switch (exercise.type) {
+      case 'questions':
+        return exercise.questions.every((_, index) => isLongAnswer((response.answers || {})[index]));
+      case 'connections_map':
+        return exercise.questions.every((_, index) => isLongAnswer((response.answers || {})[index]));
+      case 'integration':
+        return exercise.modules.every((_, index) => isLongAnswer((response.answers || {})[index]));
+      case 'letter':
+      case 'textarea':
+        return isLongAnswer(response.text);
+      case 'timeline':
+        return (state.timelineMoments || []).length >= exercise.moments &&
+          (state.timelineMoments || []).slice(0, exercise.moments)
+            .every(moment => isLongAnswer(moment.text));
+      case 'rewrite':
+        return exercise.fields.every((_, index) => isLongAnswer((response.fields || {})[index]));
+      case 'ikigai':
+        return ['love', 'good', 'world', 'paid', 'ikigai']
+          .every(key => isLongAnswer((state.ikigai || {})[key]));
+      case 'purpose_statement':
+        return isLongAnswer(state.purposeStatement) &&
+          isLongAnswer(((state.exercises || {})['4.2'] || {}).manifestation);
+      case 'goals_90days':
+        return (state.goals90 || []).length >= exercise.count &&
+          (state.goals90 || []).slice(0, exercise.count)
+            .every(goal => isLongAnswer(goal.text));
+      default:
+        return true;
+    }
+  });
+
+  const hasTextExercises = module.exercises.some(exercise =>
+    ['questions', 'connections_map', 'integration', 'letter', 'textarea', 'timeline',
+      'rewrite', 'ikigai', 'purpose_statement', 'goals_90days'].includes(exercise.type)
+  );
+  return hasTextExercises && checks.every(Boolean);
 }
 
 // ── Streak diário ────────────────────────────────────────────────────────────
@@ -483,12 +545,13 @@ function showModuleCelebration(achievement) {
 
   const overlay = document.createElement('div');
   overlay.id = 'celebration-overlay';
+  overlay.className = 'celebration-overlay';
   overlay.style.cssText = `
     position: fixed; inset: 0; z-index: 10000;
     background: rgba(0,0,0,0.85);
     backdrop-filter: blur(12px);
     display: flex; align-items: center; justify-content: center;
-    padding: 24px;
+    padding: 16px;
     animation: fadeIn 0.4s ease;
   `;
 
@@ -497,12 +560,11 @@ function showModuleCelebration(achievement) {
       background: linear-gradient(135deg, #1a1a2e, #16213e);
       border: 2px solid ${mod.color};
       border-radius: 24px;
-      padding: 40px 36px;
+      padding: clamp(20px, 5vw, 40px) clamp(18px, 6vw, 36px);
       max-width: 480px;
       width: 100%;
       text-align: center;
       position: relative;
-      overflow: hidden;
       animation: celebrationPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
     ">
       <!-- Confetti particles -->
@@ -606,23 +668,24 @@ function showModuleCelebration(achievement) {
 function showProgramCelebration() {
   const overlay = document.createElement('div');
   overlay.id = 'program-celebration-overlay';
+  overlay.className = 'celebration-overlay';
   overlay.style.cssText = `
     position:fixed; inset:0; z-index:10001;
     background:rgba(0,0,0,0.92);
     backdrop-filter:blur(16px);
     display:flex; align-items:center; justify-content:center;
-    padding:24px;
+    padding:16px;
     animation:fadeIn 0.5s ease;
   `;
   overlay.innerHTML = `
-    <div style="
+    <div class="program-celebration-modal" style="
       background:linear-gradient(160deg,#0f0f1a,#1a1a2e);
       border:2px solid #F7B731;
-      border-radius:24px; padding:48px 40px;
+      border-radius:24px; padding:clamp(24px, 6vw, 48px) clamp(20px, 5vw, 40px);
       max-width:520px; width:100%;
       text-align:center;
       animation:celebrationPop 0.7s cubic-bezier(0.34,1.56,0.64,1);
-      position:relative; overflow:hidden;
+      position:relative;
     ">
       <div class="confetti-container" id="confetti-program"></div>
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(247,183,49,0.08) 0%,transparent 70%);pointer-events:none"></div>

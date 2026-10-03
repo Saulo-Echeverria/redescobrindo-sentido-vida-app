@@ -10,6 +10,7 @@ function loadState() {
 
 function saveState() {
   try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+  if (typeof checkAchievements === 'function') checkAchievements();
 }
 
 function getDefaultState() {
@@ -47,6 +48,7 @@ function navigate(view, moduleId) {
   if (moduleId !== undefined) state.currentModule = moduleId;
   saveState();
   render();
+  window.scrollTo(0, 0);
 }
 
 // ===== HELPERS =====
@@ -147,6 +149,7 @@ function updateTopbar() {
     dashboard: { title: 'Painel Principal', sub: 'Visão geral da sua jornada' },
     module: { title: `Módulo ${state.currentModule} — ${state.currentModule ? PROGRAM_DATA.modules[state.currentModule - 1].title : ''}`, sub: state.currentModule ? PROGRAM_DATA.modules[state.currentModule - 1].week : '' },
     progress: { title: 'Meu Progresso', sub: 'Acompanhe sua evolução' },
+    achievements: { title: 'Minhas Conquistas', sub: 'Celebre cada passo da sua jornada' },
     diary: { title: 'Diário Semanal', sub: 'Reflexões e descobertas' },
     manifesto: { title: 'Meu Manifesto de Vida', sub: 'Sua declaração pessoal de sentido' },
     certificate: { title: 'Certificado', sub: 'Conclusão do programa' }
@@ -166,6 +169,7 @@ function renderView() {
       dashboard: renderDashboard,
       module: renderModuleView,
       progress: renderProgress,
+      achievements: renderAchievements,
       diary: renderDiary,
       manifesto: renderManifesto,
       certificate: renderCertificate
@@ -219,6 +223,7 @@ function renderDashboard() {
   }).join('');
 
   // Thermometer
+  renderDailyQuoteWidget();
   renderThermometer();
 }
 
@@ -1233,6 +1238,10 @@ function init() {
       <span class="nav-item-icon">📊</span>
       <span class="nav-item-text">Meu Progresso</span>
     </div>
+    <div class="nav-item ${state.currentView === 'achievements' ? 'active' : ''}" data-view="achievements" onclick="navigate('achievements')">
+      <span class="nav-item-icon">🏆</span>
+      <span class="nav-item-text">Conquistas</span>
+    </div>
     <div class="nav-item ${state.currentView === 'diary' ? 'active' : ''}" data-view="diary" onclick="navigate('diary')">
       <span class="nav-item-icon">📔</span>
       <span class="nav-item-text">Diário Semanal</span>
@@ -1266,6 +1275,7 @@ function init() {
   }
 
   render();
+  if (typeof checkAchievements === 'function') checkAchievements();
 }
 
 document.addEventListener('DOMContentLoaded', init);
