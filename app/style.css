@@ -1462,6 +1462,12 @@ textarea { min-height: 100px; }
 
 .modal-overlay.open .modal { transform: scale(1); }
 
+.modal {
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
 .modal-title {
   font-size: 20px;
   font-weight: 800;
@@ -1479,6 +1485,34 @@ textarea { min-height: 100px; }
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+}
+
+.profile-reset {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.profile-reset p {
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.btn-danger {
+  flex-shrink: 0;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.35);
+  color: #F87171;
+}
+
+.btn-danger:hover {
+  background: rgba(239,68,68,0.2);
+  border-color: rgba(239,68,68,0.6);
 }
 
 /* ===== EMPTY STATE ===== */
@@ -1536,6 +1570,13 @@ textarea { min-height: 100px; }
 @media (max-width: 600px) {
   .daily-practices-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .profile-reset {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .profile-reset .btn {
+    justify-content: center;
   }
   .certificate {
     padding: 28px 20px;
