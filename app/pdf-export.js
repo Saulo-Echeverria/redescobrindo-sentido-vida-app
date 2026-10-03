@@ -740,6 +740,48 @@ function generatePDFReport() {
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .page-break-after { page-break-after: always; }
       .page-break-before { page-break-before: always; }
+      .report-toolbar { display: none !important; }
+    }
+
+    /* REPORT CONTROLS */
+    .report-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 20px;
+      background: #1a1a2e;
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .report-toolbar a,
+    .report-toolbar button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .report-toolbar button {
+      border-color: #6C63FF;
+      background: #6C63FF;
+    }
+    @media (max-width: 480px) {
+      .report-toolbar { padding: 10px 12px; }
+      .report-toolbar a,
+      .report-toolbar button { padding: 8px 10px; font-size: 12px; }
     }
   `;
 
@@ -755,6 +797,12 @@ function generatePDFReport() {
   <style>${pdfCSS}</style>
 </head>
 <body>
+  <nav class="report-toolbar" aria-label="Ações do relatório">
+    <a href="${esc(window.location.href)}" onclick="if(window.opener && !window.opener.closed){event.preventDefault();window.close();}">
+      ← Voltar ao aplicativo
+    </a>
+    <button type="button" onclick="window.print()">Imprimir / Salvar PDF</button>
+  </nav>
   ${buildCover()}
   ${buildSummary()}
   ${buildThermometer()}
@@ -763,12 +811,6 @@ function generatePDFReport() {
   ${buildDiary()}
   ${buildManifesto()}
   ${buildFinalSynthesis()}
-  <script>
-    // Auto-print quando abrir
-    window.addEventListener('load', function() {
-      setTimeout(function() { window.print(); }, 800);
-    });
-  <\/script>
 </body>
 </html>`;
 

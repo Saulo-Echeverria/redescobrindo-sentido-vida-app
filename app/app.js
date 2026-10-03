@@ -1200,6 +1200,30 @@ function closeSetupModal() {
   document.getElementById('setup-modal').classList.remove('open');
 }
 
+function resetJourney() {
+  const confirmed = window.confirm(
+    'Isso apagará seu perfil, respostas, progresso, práticas, conquistas e XP deste dispositivo. Esta ação não pode ser desfeita. Deseja reiniciar a jornada?'
+  );
+  if (!confirmed) return;
+
+  try {
+    localStorage.removeItem(STATE_KEY);
+    localStorage.removeItem(ACHIEVEMENTS_KEY);
+  } catch (error) {
+    showToast('Não foi possível apagar os dados da jornada. Tente novamente.', 'info');
+    console.error('Falha ao reiniciar a jornada:', error);
+    return;
+  }
+
+  state = getDefaultState();
+  achievements = loadAchievements();
+  document.getElementById('setup-name').value = '';
+  document.getElementById('setup-date').value = '';
+  document.getElementById('setup-intention').value = '';
+  render();
+  showToast('Jornada reiniciada. Configure seu perfil para começar de novo.');
+}
+
 function saveSetup() {
   const name = document.getElementById('setup-name').value.trim();
   const date = document.getElementById('setup-date').value;
