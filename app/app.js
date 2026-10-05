@@ -670,7 +670,7 @@ function renderFinalRating(ex, exData) {
   const areas = exData.areas || {};
   const initialAreas = (state.exercises['1.1'] || {}).areas || {};
   return `
-    <div>
+    <div id="final-rating-${ex.id}">
       <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text3)">
         💡 Compare com sua avaliação inicial no Módulo 1
       </div>
@@ -681,10 +681,10 @@ function renderFinalRating(ex, exData) {
         const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '=';
         const diffColor = diff > 0 ? 'var(--success)' : diff < 0 ? 'var(--danger)' : 'var(--text3)';
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-area="${area}">
             <div class="rating-area-label">
               ${area}
-              ${initial > 0 ? `<span style="font-size:11px;color:${diffColor};margin-left:8px">${diffStr} (era ${initial})</span>` : ''}
+              ${initial > 0 ? `<span class="final-rating-comparison" style="font-size:11px;color:${diffColor};margin-left:8px">${diffStr} (era ${initial})</span>` : ''}
             </div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -1061,20 +1061,28 @@ function setFinalRating(exId, area, val) {
   if (!state.exercises[exId].areas) state.exercises[exId].areas = {};
   state.exercises[exId].areas[area] = val;
   saveState();
-  const container = document.getElementById('values-alignment');
-  // Re-render final rating dots
-  document.querySelectorAll('.rating-area').forEach(row => {
-    const labelEl = row.querySelector('.rating-area-label');
-    if (!labelEl) return;
-    const labelText = labelEl.textContent.replace(/\+\d+.*$/, '').replace(/-\d+.*$/, '').replace(/=.*$/, '').trim();
-    if (labelText === area) {
-      row.querySelectorAll('.rating-dot').forEach((dot, i) => {
-        const n = i + 1;
-        dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
-        dot.style.cssText = val === n ? `background:${getColorForValue(n)};border-color:${getColorForValue(n)};color:#fff;` : '';
-      });
-    }
+  const container = document.getElementById(`final-rating-${exId}`);
+  const row = container && Array.from(container.querySelectorAll('.rating-area'))
+    .find(item => item.dataset.area === area);
+  if (!row) return;
+
+  row.querySelectorAll('.rating-dot').forEach((dot, i) => {
+    const selected = val === i + 1;
+    dot.className = selected ? 'rating-dot selected' : 'rating-dot';
+    dot.style.cssText = selected
+      ? `background:${getColorForValue(val)};border-color:${getColorForValue(val)};color:#fff;`
+      : '';
   });
+
+  const initial = ((state.exercises['1.1'] || {}).areas || {})[area] || 0;
+  const comparison = row.querySelector('.final-rating-comparison');
+  if (comparison && initial > 0) {
+    const diff = val - initial;
+    comparison.textContent = `${diff > 0 ? '+' : diff < 0 ? '' : '='}${diff} (era ${initial})`;
+    comparison.style.color = diff > 0
+      ? 'var(--success)'
+      : diff < 0 ? 'var(--danger)' : 'var(--text3)';
+  }
 }
 
 function setFinalReflection(exId, val) {
