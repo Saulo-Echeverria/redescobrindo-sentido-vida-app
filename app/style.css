@@ -1675,9 +1675,25 @@ textarea { min-height: 100px; }
     height: 28px;
     font-size: 12px;
   }
-  .profile-reset {
-    align-items: stretch;
+  .diary-rating-row {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .diary-rating-label {
+    white-space: normal;
+  }
+  .diary-rating-row .rating-dots {
+    width: 100%;
+    justify-content: space-between;
+    gap: 2px;
+  }
+  .diary-rating-row .rating-dot {
+    width: 24px;
+    height: 24px;
+    font-size: 9px;
+    flex: 1;
+    max-width: 28px;
   }
   .profile-reset .btn {
     justify-content: center;
