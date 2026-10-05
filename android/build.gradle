@@ -22,8 +22,9 @@ allprojects {
         google()
         mavenCentral()
     }
+    layout.buildDirectory = file("C:/tmp/build-redescobrindo/${project.name}")
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.layout.buildDirectory
+    delete file("C:/tmp/build-redescobrindo")
 }

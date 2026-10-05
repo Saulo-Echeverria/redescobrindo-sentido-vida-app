@@ -24,7 +24,7 @@
   --font: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; width: 100%; max-width: 100%; overflow-x: hidden; }
 
 body {
   font-family: var(--font);
@@ -33,6 +33,8 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -41,12 +43,12 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
 /* ===== LAYOUT ===== */
-#app { display: flex; min-height: 100vh; }
+#app { display: flex; min-height: 100vh; width: 100%; max-width: 100vw; overflow-x: hidden; }
 
 /* ===== SIDEBAR ===== */
 #sidebar {
   width: 280px;
-  min-width: 280px;
+  max-width: 85vw;
   background: var(--bg2);
   border-right: 1px solid var(--border);
   display: flex;
@@ -206,6 +208,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ===== TOP BAR ===== */
@@ -222,6 +227,10 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .topbar-title {
@@ -284,10 +293,12 @@ body {
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* ===== VIEWS ===== */
-.view { display: none; }
+.view { display: none; min-width: 0; width: 100%; }
 .view.active { display: block; }
 
 /* ===== DASHBOARD ===== */
@@ -1536,6 +1547,10 @@ textarea { min-height: 100px; }
   }
   #main {
     margin-left: 0;
+    width: 100%;
+  }
+  #topbar {
+    padding: 0 20px;
   }
   .modules-grid {
     grid-template-columns: 1fr;
@@ -1546,8 +1561,8 @@ textarea { min-height: 100px; }
   .ikigai-grid {
     grid-template-columns: 1fr;
   }
-  .daily-practices-grid {
-    grid-template-columns: repeat(4, 1fr);
+  .progress-overview {
+    grid-template-columns: 1fr;
   }
   #page-content {
     padding: 20px 16px;
@@ -1568,8 +1583,97 @@ textarea { min-height: 100px; }
 }
 
 @media (max-width: 600px) {
+  #topbar {
+    padding: 0 12px;
+    gap: 8px;
+    height: 56px;
+  }
+  .topbar-title {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
+  }
+  .topbar-subtitle {
+    display: none;
+  }
+  .topbar-actions {
+    gap: 6px;
+  }
+  .topbar-actions .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  #page-content {
+    padding: 16px 12px;
+  }
+  .dashboard-hero {
+    padding: 16px;
+  }
+  .hero-quote {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .hero-stat {
+    min-width: 0;
+    padding: 10px 12px;
+  }
+  .hero-stat-value {
+    font-size: 20px;
+  }
+  .hero-stat-label {
+    font-size: 9px;
+  }
+  .thermometer-section {
+    padding: 16px 12px;
+  }
+  .thermometer-grid {
+    grid-template-columns: 1fr;
+  }
+  .rating-area {
+    padding: 12px;
+    gap: 8px;
+  }
+  .rating-dots {
+    width: 100%;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .rating-dot {
+    width: 26px;
+    height: 26px;
+    font-size: 9px;
+  }
+  .value-rank-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .value-rank-why {
+    width: 100%;
+  }
+  .value-rank-why input,
+  .value-rank-why textarea {
+    width: 100%;
+  }
   .daily-practices-grid {
-    grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .day-header {
+    font-size: 9px;
+  }
+  .practice-check {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
   .profile-reset {
     align-items: stretch;
@@ -1579,10 +1683,19 @@ textarea { min-height: 100px; }
     justify-content: center;
   }
   .certificate {
-    padding: 28px 20px;
+    padding: 24px 16px;
   }
   .certificate-name {
-    font-size: 22px;
+    font-size: 20px;
+    word-break: break-word;
+  }
+  .modal-overlay {
+    padding: 12px;
+  }
+  .modal {
+    padding: 20px 16px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
   }
 }
 

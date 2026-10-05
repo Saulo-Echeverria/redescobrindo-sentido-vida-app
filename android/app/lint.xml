@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Capacitor resources accessed dynamically by bridge/plugins -->
+    <issue id="UnusedResources">
+        <ignore path="src/main/res/layout/activity_main.xml" />
+        <ignore path="src/main/res/xml/config.xml" />
+        <ignore path="src/main/res/drawable/ic_launcher_background.xml" />
+        <ignore path="src/main/res/drawable-v24/ic_launcher_foreground.xml" />
+        <ignore path="src/main/res/values/strings.xml" />
+        <ignore path="src/main/res/values/styles.xml" />
+    </issue>
+    <!-- Splash screen assets generated for various screen density ratios -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+    <issue id="IconDipSize" severity="ignore" />
+    <issue id="IconDuplicatesConfig" severity="ignore" />
+</lint>
