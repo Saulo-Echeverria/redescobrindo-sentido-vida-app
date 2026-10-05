@@ -786,7 +786,7 @@ function generatePDFReport() {
   `;
 
   // ── MONTAR HTML COMPLETO ─────────────────────────────────────────────────────
-  const html = `<!DOCTYPE html>
+  const html = translateHTML(`<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -812,7 +812,7 @@ function generatePDFReport() {
   ${buildManifesto()}
   ${buildFinalSynthesis()}
 </body>
-</html>`;
+</html>`);
 
   // ── ABRIR EM NOVA JANELA E IMPRIMIR ─────────────────────────────────────────
   const win = window.open('', '_blank', 'width=900,height=700');

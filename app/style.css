@@ -247,6 +247,19 @@ body {
 
 .topbar-actions { display: flex; align-items: center; gap: 10px; }
 
+.language-select {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

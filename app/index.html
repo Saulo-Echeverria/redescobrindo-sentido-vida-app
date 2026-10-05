@@ -280,6 +280,13 @@
 <div class="modal-title">🌟 Configure seu Perfil</div>
 <div class="modal-text">Personalize sua jornada de autodescoberta. Estas informações ficam salvas apenas no seu dispositivo.</div>
 <div class="form-group">
+<label class="form-label" for="language-select">Idioma</label>
+<select class="language-select" id="language-select" aria-label="Idioma" onchange="setLanguage(this.value)">
+<option value="pt">Português</option>
+<option value="en">English</option>
+</select>
+</div>
+<div class="form-group">
 <label class="form-label">Seu Nome *</label>
 <input id="setup-name" placeholder="Como você gostaria de ser chamado(a)?" type="text"/>
 </div>
@@ -302,6 +309,7 @@
 </div>
 </div>
 <script src="data.js"></script>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 <script src="pdf-export.js"></script>
 <script src="achievements.js"></script>
@@ -449,6 +457,7 @@ document.addEventListener('keydown', function(e) {
       </style>
     `;
     document.body.appendChild(banner);
+    translateDOM(banner);
   }
 
   function hideInstallBanner() {
@@ -492,6 +501,7 @@ document.addEventListener('keydown', function(e) {
       </div>
     `;
     document.body.appendChild(banner);
+    translateDOM(banner);
   }
 
   window.applyPWAUpdate = function() {
@@ -516,6 +526,7 @@ document.addEventListener('keydown', function(e) {
           ">📵 Você está offline — seus dados continuam salvos localmente</div>
         `;
         document.body.appendChild(indicator);
+        translateDOM(indicator);
       }
     } else {
       if (indicator) indicator.remove();
