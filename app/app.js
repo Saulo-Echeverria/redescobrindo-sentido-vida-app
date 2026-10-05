@@ -93,6 +93,7 @@ function showToast(msg, type = 'success') {
   toast.className = `toast ${type}`;
   toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : 'ℹ'}</span><span>${msg}</span>`;
   container.appendChild(toast);
+  translateDOM(toast);
   setTimeout(() => {
     toast.style.animation = 'slideOut 0.3s ease forwards';
     setTimeout(() => toast.remove(), 300);
@@ -102,7 +103,7 @@ function showToast(msg, type = 'success') {
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('pt-BR');
+  return d.toLocaleDateString(getDateLocale());
 }
 
 function today() {
@@ -114,6 +115,7 @@ function render() {
   updateSidebar();
   updateTopbar();
   renderView();
+  translateDOM(document.body);
 }
 
 function updateSidebar() {
@@ -381,7 +383,7 @@ function renderRatingAreas(ex, exData) {
       ${ex.areas.map(area => {
         const val = areas[area] || 0;
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-area="${area}">
             <div class="rating-area-label">${area}</div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -503,7 +505,7 @@ function renderValuesAlignment(ex) {
       ${selected.map(v => {
         const val = alignment[v] || 0;
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-value="${v}">
             <div class="rating-area-label">${v}</div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -918,8 +920,7 @@ function setRatingArea(exId, area, val) {
   const container = document.getElementById(`rating-areas-${exId}`);
   if (container) {
     container.querySelectorAll('.rating-area').forEach(row => {
-      const label = row.querySelector('.rating-area-label').textContent;
-      if (label === area) {
+      if (row.dataset.area === area) {
         row.querySelectorAll('.rating-dot').forEach((dot, i) => {
           const n = i + 1;
           dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
@@ -1003,8 +1004,7 @@ function setValueAlignment(v, val) {
   const container = document.getElementById('values-alignment');
   if (container) {
     container.querySelectorAll('.rating-area').forEach(row => {
-      const label = row.querySelector('.rating-area-label').textContent.trim();
-      if (label === v) {
+      if (row.dataset.value === v) {
         row.querySelectorAll('.rating-dot').forEach((dot, i) => {
           const n = i + 1;
           dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
@@ -1079,6 +1079,7 @@ function setFinalRating(exId, area, val) {
   if (comparison && initial > 0) {
     const diff = val - initial;
     comparison.textContent = `${diff > 0 ? '+' : diff < 0 ? '' : '='}${diff} (era ${initial})`;
+    translateDOM(comparison.parentElement);
     comparison.style.color = diff > 0
       ? 'var(--success)'
       : diff < 0 ? 'var(--danger)' : 'var(--text3)';
@@ -1209,9 +1210,9 @@ function closeSetupModal() {
 }
 
 function resetJourney() {
-  const confirmed = window.confirm(
+  const confirmed = window.confirm(translateText(
     'Isso apagará seu perfil, respostas, progresso, práticas, conquistas e XP deste dispositivo. Esta ação não pode ser desfeita. Deseja reiniciar a jornada?'
-  );
+  ));
   if (!confirmed) return;
 
   try {

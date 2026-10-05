@@ -1,7 +1,7 @@
 // ===== SERVICE WORKER — Redescobrindo o Sentido da Vida =====
 // Estratégia: Cache-First para assets estáticos, Network-First para dados
 
-const APP_VERSION = 'v1.0.6';
+const APP_VERSION = 'v1.0.7';
 const CACHE_STATIC = `rsv-static-${APP_VERSION}`;
 const CACHE_DYNAMIC = `rsv-dynamic-${APP_VERSION}`;
 
@@ -11,6 +11,7 @@ const STATIC_ASSETS = [
   '/style.css',
   '/app.js',
   '/data.js',
+  '/i18n.js',
   '/pdf-export.js',
   '/achievements.js',
   '/quotes.js',
