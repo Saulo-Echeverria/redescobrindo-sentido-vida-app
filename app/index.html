@@ -105,7 +105,7 @@
 <div class="topbar-actions">
 <button class="btn btn-ghost" onclick="openSetupModal()">⚙️ Perfil</button>
 <button class="btn btn-ghost" onclick="generatePDFReport()" title="Exportar relatório completo em PDF">📄 Exportar PDF</button>
-<button class="btn btn-primary" onclick="navigate('module', 1)">▶ Continuar</button>
+<button class="btn btn-primary" onclick="continueJourney()">▶ Continuar</button>
 </div>
 </div>
 <!-- PAGE CONTENT -->
@@ -316,6 +316,37 @@
 <script src="quotes.js"></script>
 <script>
 // Extra helpers defined after app.js loads
+function continueJourney() {
+  let targetModule = 1;
+  if (state.currentModule && isModuleUnlocked(state.currentModule)) {
+    const p = getModuleProgress(state.currentModule);
+    if (p.pct < 100) {
+      navigate('module', state.currentModule);
+      return;
+    }
+  }
+  for (let i = PROGRAM_DATA.modules.length; i >= 1; i--) {
+    const mId = PROGRAM_DATA.modules[i - 1].id;
+    if (isModuleUnlocked(mId)) {
+      const p = getModuleProgress(mId);
+      if (p.pct < 100) {
+        targetModule = mId;
+        break;
+      }
+    }
+  }
+  if (targetModule === 1) {
+    for (let i = PROGRAM_DATA.modules.length; i >= 1; i--) {
+      const mId = PROGRAM_DATA.modules[i - 1].id;
+      if (isModuleUnlocked(mId)) {
+        targetModule = mId;
+        break;
+      }
+    }
+  }
+  navigate('module', targetModule);
+}
+
 function goNextModule() {
   const current = state.currentModule;
   if (current < 7) {
