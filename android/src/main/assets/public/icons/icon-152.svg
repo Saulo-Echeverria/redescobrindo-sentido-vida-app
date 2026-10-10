@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="152" height="152" viewBox="0 0 152 152">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="circle_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6C63FF"/>
+      <stop offset="100%" style="stop-color:#8B83FF"/>
+    </linearGradient>
+    <linearGradient id="star_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7B731"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded rect (maskable safe zone) -->
+  <rect width="152" height="152" rx="33.4" fill="url(#bg)"/>
+  <!-- Outer glow ring -->
+  <circle cx="76.0" cy="76.0" r="63.84" fill="none" stroke="#6C63FF" stroke-width="2.28" opacity="0.3"/>
+  <!-- Main circle -->
+  <circle cx="76.0" cy="76.0" r="52.35" fill="url(#circle_grad)" opacity="0.15"/>
+  <!-- Orbit dots -->
+  <circle cx="121.96" cy="76.00" r="4.26" fill="white" opacity="0.30"/><circle cx="108.50" cy="108.50" r="4.26" fill="white" opacity="0.39"/><circle cx="76.00" cy="121.96" r="4.26" fill="white" opacity="0.47"/><circle cx="43.50" cy="108.50" r="4.26" fill="white" opacity="0.56"/><circle cx="30.04" cy="76.00" r="4.26" fill="white" opacity="0.65"/><circle cx="43.50" cy="43.50" r="4.26" fill="white" opacity="0.74"/><circle cx="76.00" cy="30.04" r="4.26" fill="white" opacity="0.82"/><circle cx="108.50" cy="43.50" r="4.26" fill="white" opacity="0.91"/>
+  <!-- Star -->
+  <polygon points="76.00,48.64 84.04,64.93 102.02,67.55 89.01,80.23 92.08,98.13 76.00,89.68 59.92,98.13 62.99,80.23 49.98,67.55 67.96,64.93" fill="url(#star_grad)"/>
+  <!-- Inner star glow -->
+  <polygon points="76.00,48.64 84.04,64.93 102.02,67.55 89.01,80.23 92.08,98.13 76.00,89.68 59.92,98.13 62.99,80.23 49.98,67.55 67.96,64.93" fill="white" opacity="0.2"/>
+</svg>

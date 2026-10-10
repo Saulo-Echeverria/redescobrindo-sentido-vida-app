@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="circle_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6C63FF"/>
+      <stop offset="100%" style="stop-color:#8B83FF"/>
+    </linearGradient>
+    <linearGradient id="star_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7B731"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded rect (maskable safe zone) -->
+  <rect width="96" height="96" rx="21.1" fill="url(#bg)"/>
+  <!-- Outer glow ring -->
+  <circle cx="48.0" cy="48.0" r="40.32" fill="none" stroke="#6C63FF" stroke-width="1.44" opacity="0.3"/>
+  <!-- Main circle -->
+  <circle cx="48.0" cy="48.0" r="33.06" fill="url(#circle_grad)" opacity="0.15"/>
+  <!-- Orbit dots -->
+  <circle cx="77.03" cy="48.00" r="2.69" fill="white" opacity="0.30"/><circle cx="68.53" cy="68.53" r="2.69" fill="white" opacity="0.39"/><circle cx="48.00" cy="77.03" r="2.69" fill="white" opacity="0.47"/><circle cx="27.47" cy="68.53" r="2.69" fill="white" opacity="0.56"/><circle cx="18.97" cy="48.00" r="2.69" fill="white" opacity="0.65"/><circle cx="27.47" cy="27.47" r="2.69" fill="white" opacity="0.74"/><circle cx="48.00" cy="18.97" r="2.69" fill="white" opacity="0.82"/><circle cx="68.53" cy="27.47" r="2.69" fill="white" opacity="0.91"/>
+  <!-- Star -->
+  <polygon points="48.00,30.72 53.08,41.01 64.43,42.66 56.22,50.67 58.16,61.98 48.00,56.64 37.84,61.98 39.78,50.67 31.57,42.66 42.92,41.01" fill="url(#star_grad)"/>
+  <!-- Inner star glow -->
+  <polygon points="48.00,30.72 53.08,41.01 64.43,42.66 56.22,50.67 58.16,61.98 48.00,56.64 37.84,61.98 39.78,50.67 31.57,42.66 42.92,41.01" fill="white" opacity="0.2"/>
+</svg>

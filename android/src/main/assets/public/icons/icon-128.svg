@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="circle_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6C63FF"/>
+      <stop offset="100%" style="stop-color:#8B83FF"/>
+    </linearGradient>
+    <linearGradient id="star_grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F7B731"/>
+      <stop offset="100%" style="stop-color:#FFD700"/>
+    </linearGradient>
+  </defs>
+  <!-- Background rounded rect (maskable safe zone) -->
+  <rect width="128" height="128" rx="28.2" fill="url(#bg)"/>
+  <!-- Outer glow ring -->
+  <circle cx="64.0" cy="64.0" r="53.76" fill="none" stroke="#6C63FF" stroke-width="1.92" opacity="0.3"/>
+  <!-- Main circle -->
+  <circle cx="64.0" cy="64.0" r="44.08" fill="url(#circle_grad)" opacity="0.15"/>
+  <!-- Orbit dots -->
+  <circle cx="102.71" cy="64.00" r="3.58" fill="white" opacity="0.30"/><circle cx="91.37" cy="91.37" r="3.58" fill="white" opacity="0.39"/><circle cx="64.00" cy="102.71" r="3.58" fill="white" opacity="0.47"/><circle cx="36.63" cy="91.37" r="3.58" fill="white" opacity="0.56"/><circle cx="25.29" cy="64.00" r="3.58" fill="white" opacity="0.65"/><circle cx="36.63" cy="36.63" r="3.58" fill="white" opacity="0.74"/><circle cx="64.00" cy="25.29" r="3.58" fill="white" opacity="0.82"/><circle cx="91.37" cy="36.63" r="3.58" fill="white" opacity="0.91"/>
+  <!-- Star -->
+  <polygon points="64.00,40.96 70.77,54.68 85.91,56.88 74.96,67.56 77.54,82.64 64.00,75.52 50.46,82.64 53.04,67.56 42.09,56.88 57.23,54.68" fill="url(#star_grad)"/>
+  <!-- Inner star glow -->
+  <polygon points="64.00,40.96 70.77,54.68 85.91,56.88 74.96,67.56 77.54,82.64 64.00,75.52 50.46,82.64 53.04,67.56 42.09,56.88 57.23,54.68" fill="white" opacity="0.2"/>
+</svg>
