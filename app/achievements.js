@@ -524,6 +524,7 @@ function showAchievementToast(achievement) {
     navigate('achievements');
   };
   container.appendChild(toast);
+  translateDOM(toast);
 
   // Vibração háptica (mobile)
   if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -658,6 +659,7 @@ function showModuleCelebration(achievement) {
   `;
 
   document.body.appendChild(overlay);
+  translateDOM(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeCelebration(); });
 
   // Lançar confetti
@@ -732,6 +734,7 @@ function showProgramCelebration() {
     </div>
   `;
   document.body.appendChild(overlay);
+  translateDOM(overlay);
   setTimeout(() => launchConfetti('confetti-program'), 400);
   if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 400]);
 }
@@ -846,7 +849,7 @@ function renderAchievements() {
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
             ${items.map(a => {
               const unlocked = achievements.unlocked[a.id];
-              const unlockedDate = unlocked ? new Date(unlocked.unlockedAt).toLocaleDateString('pt-BR') : null;
+              const unlockedDate = unlocked ? new Date(unlocked.unlockedAt).toLocaleDateString(getDateLocale()) : null;
               return `
                 <div style="
                   background:${unlocked ? rc.bg : 'rgba(255,255,255,0.02)'};

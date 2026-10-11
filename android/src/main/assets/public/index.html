@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
 <title>Redescobrindo o Sentido da Vida</title>
 
 <!-- ===== PWA META TAGS ===== -->
@@ -274,11 +274,153 @@
 <button id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
+<!-- WELCOME ONBOARDING MODAL -->
+<div class="modal-overlay" id="welcome-modal">
+  <div class="modal welcome-modal-content">
+    <div class="welcome-indicators">
+      <div class="welcome-dot active" onclick="showWelcomeSlide(1)"></div>
+      <div class="welcome-dot" onclick="showWelcomeSlide(2)"></div>
+      <div class="welcome-dot" onclick="showWelcomeSlide(3)"></div>
+    </div>
+
+    <!-- Slide 1 -->
+    <div class="welcome-slide active" id="welcome-slide-1">
+      <div class="welcome-hero-icon">🌟</div>
+      <div class="modal-title text-center">Redescobrindo o Sentido da Vida</div>
+      <div class="modal-text text-center">
+        Uma jornada acolhedora e inspiradora de autodescoberta existencial baseada nos pilares da Logoterapia.
+      </div>
+
+      <div class="welcome-card-highlight">
+        <div class="welcome-card-title">🧠 Viktor Frankl e a Logoterapia</div>
+        <div class="welcome-card-desc">
+          Criada por Viktor Frankl — psiquiatra austríaco, sobrevivente do Holocausto e autor de "Em Busca de Sentido". A Logoterapia parte do princípio de que a principal motivação humana não é o prazer ou o poder, mas sim a busca por significado.
+        </div>
+        <div class="welcome-quote">
+          "Aqueles que têm um 'porquê' para viver, suportam quase qualquer 'como'."
+          <span class="welcome-quote-author">— Viktor Frankl</span>
+        </div>
+      </div>
+
+      <div class="welcome-card-highlight mt-12">
+        <div class="welcome-card-title">✨ Sentido de Vida Transforma a Saúde</div>
+        <div class="welcome-card-desc">
+          Estudos demonstram que ter um propósito claro fortalece a resiliência emocional, reduz o estresse crônico e promove bem-estar integral e longevidade.
+        </div>
+      </div>
+
+      <div class="modal-actions mt-20">
+        <button class="btn btn-primary w-full" onclick="nextWelcomeSlide()">Começar a Jornada →</button>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="welcome-slide" id="welcome-slide-2">
+      <div class="modal-title text-center">7 Módulos, 7 Semanas</div>
+      <div class="modal-text text-center">
+        Toda a sua jornada estruturada de forma clara para acompanhar passo a passo.
+      </div>
+
+      <div class="welcome-modules-grid">
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">🌑</span><span>M1: O Vazio Existencial</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">🧭</span><span>M2: A Vontade de Sentido</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">🦋</span><span>M3: Liberdade & Responsabilidade</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">💎</span><span>M4: Os Valores que Iluminam</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">❤️</span><span>M5: Trabalho, Amor e Ação</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">🏔️</span><span>M6: Superando o Sofrimento</span></div>
+        <div class="welcome-mod-item"><span class="welcome-mod-icon">🌅</span><span>M7: Legado e Plenitude</span></div>
+      </div>
+
+      <div class="modal-title text-center mt-20" style="font-size:18px;">Ferramentas Para Sua Jornada ✨</div>
+      <div class="welcome-features-list">
+        <div class="welcome-feature-row">
+          <span class="welcome-feature-icon">📝</span>
+          <div>
+            <div class="welcome-feature-title">Exercícios Práticos</div>
+            <div class="welcome-feature-desc">Reflexões guiadas para aplicação diária.</div>
+          </div>
+        </div>
+        <div class="welcome-feature-row">
+          <span class="welcome-feature-icon">🏆</span>
+          <div>
+            <div class="welcome-feature-title">Conquistas e Troféus</div>
+            <div class="welcome-feature-desc">Celebre marcos e ganhe XP na sua jornada.</div>
+          </div>
+        </div>
+        <div class="welcome-feature-row">
+          <span class="welcome-feature-icon">📔</span>
+          <div>
+            <div class="welcome-feature-title">Diário Semanal</div>
+            <div class="welcome-feature-desc">Espaço para registrar descobertas e compromissos.</div>
+          </div>
+        </div>
+        <div class="welcome-feature-row">
+          <span class="welcome-feature-icon">📄</span>
+          <div>
+            <div class="welcome-feature-title">Relatório em PDF</div>
+            <div class="welcome-feature-desc">Exporte sua jornada e respostas em documento formatado.</div>
+          </div>
+        </div>
+        <div class="welcome-feature-row">
+          <span class="welcome-feature-icon">📵</span>
+          <div>
+            <div class="welcome-feature-title">100% Offline</div>
+            <div class="welcome-feature-desc">Seus dados ficam salvos com total privacidade no seu dispositivo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions mt-20">
+        <button class="btn btn-primary w-full" onclick="nextWelcomeSlide()">Próximo: Compromisso 🤝 →</button>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="welcome-slide" id="welcome-slide-3">
+      <div class="modal-title text-center">Um Compromisso Consigo Mesmo 🤝</div>
+      <div class="modal-text text-center">
+        O autoconhecimento exige presença, honestidade e dedicação. Assuma este pacto com sua própria vida.
+      </div>
+
+      <div class="welcome-commitments-box">
+        <div class="welcome-check-item">
+          <span class="welcome-check-icon">☑️</span>
+          <span>Assumo a responsabilidade por buscar ativamente o meu sentido de vida e propósito.</span>
+        </div>
+        <div class="welcome-check-item">
+          <span class="welcome-check-icon">☑️</span>
+          <span>Dedicarei momentos semanais para a reflexão sincera e os exercícios práticos.</span>
+        </div>
+        <div class="welcome-check-item">
+          <span class="welcome-check-icon">☑️</span>
+          <span>Compreendo que o sentido não se busca fora, mas se constrói e descobre na vivência.</span>
+        </div>
+      </div>
+
+      <div class="welcome-quote mt-16">
+        "Não são as coisas que nos abalam, mas a opinião que temos delas."
+        <span class="welcome-quote-author">— Epicteto</span>
+      </div>
+
+      <div class="modal-actions mt-24">
+        <button class="btn btn-primary w-full pulse-btn" onclick="nextWelcomeSlide()" style="font-size:16px;padding:14px 20px;">Estou Pronto(a) — Começar! 🌟</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SETUP MODAL -->
 <div class="modal-overlay" id="setup-modal">
 <div class="modal">
 <div class="modal-title">🌟 Configure seu Perfil</div>
 <div class="modal-text">Personalize sua jornada de autodescoberta. Estas informações ficam salvas apenas no seu dispositivo.</div>
+<div class="form-group">
+<label class="form-label" for="language-select">Idioma</label>
+<select class="language-select" id="language-select" aria-label="Idioma" onchange="setLanguage(this.value)">
+<option value="pt">Português</option>
+<option value="en">English</option>
+</select>
+</div>
 <div class="form-group">
 <label class="form-label">Seu Nome *</label>
 <input id="setup-name" placeholder="Como você gostaria de ser chamado(a)?" type="text"/>
@@ -295,15 +437,22 @@
 <button class="btn btn-ghost" onclick="closeSetupModal()">Cancelar</button>
 <button class="btn btn-primary" onclick="saveSetup()">✓ Salvar e Começar</button>
 </div>
+<div class="profile-reset">
+<p>Quer iniciar uma nova jornada? Isso apagará permanentemente o perfil, as respostas, o progresso e as conquistas salvos neste dispositivo.</p>
+<button class="btn btn-danger" type="button" onclick="resetJourney()">Reiniciar jornada</button>
+</div>
+<div style="margin-top: 16px; text-align: center;">
+<button class="btn btn-ghost" type="button" onclick="closeSetupModal(); openWelcomeModal();" style="font-size:13px; width:100%;">🌟 Ver Apresentação de Boas-Vindas</button>
+</div>
 </div>
 </div>
 <script src="data.js"></script>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 <script src="pdf-export.js"></script>
 <script src="achievements.js"></script>
 <script src="quotes.js"></script>
 <script>
-// Extra helpers defined after app.js loads
 // Extra helpers defined after app.js loads
 function continueJourney() {
   let targetModule = 1;
@@ -477,6 +626,7 @@ document.addEventListener('keydown', function(e) {
       </style>
     `;
     document.body.appendChild(banner);
+    translateDOM(banner);
   }
 
   function hideInstallBanner() {
@@ -520,6 +670,7 @@ document.addEventListener('keydown', function(e) {
       </div>
     `;
     document.body.appendChild(banner);
+    translateDOM(banner);
   }
 
   window.applyPWAUpdate = function() {
@@ -544,6 +695,7 @@ document.addEventListener('keydown', function(e) {
           ">📵 Você está offline — seus dados continuam salvos localmente</div>
         `;
         document.body.appendChild(indicator);
+        translateDOM(indicator);
       }
     } else {
       if (indicator) indicator.remove();

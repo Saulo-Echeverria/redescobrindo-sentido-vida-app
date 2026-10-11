@@ -132,6 +132,7 @@ function renderDailyQuoteWidget() {
       <div class="dq-author">— ${quote.author}</div>
       <button class="dq-refresh" onclick="refreshDailyQuote()" title="Nova frase">↻</button>
     </div>`;
+  translateDOM(el);
 }
 
 let _quoteRefreshIdx = 0;
@@ -154,6 +155,7 @@ function refreshDailyQuote() {
         <div class="dq-author">— ${quote.author}</div>
         <button class="dq-refresh" onclick="refreshDailyQuote()" title="Nova frase">↻</button>
       </div>`;
+    translateDOM(el);
     el.style.opacity = '1';
   }, 300);
 }

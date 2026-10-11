@@ -36,6 +36,7 @@ function getDefaultState() {
     purposeStatement: '',
     goals90: [],           // [{ text: '', deadline: '' }, ...]
     timelineMoments: [],   // [{ year: '', text: '' }, ...]
+    welcomeDone: false,
     setupDone: false
   };
 }
@@ -93,6 +94,7 @@ function showToast(msg, type = 'success') {
   toast.className = `toast ${type}`;
   toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : 'ℹ'}</span><span>${msg}</span>`;
   container.appendChild(toast);
+  translateDOM(toast);
   setTimeout(() => {
     toast.style.animation = 'slideOut 0.3s ease forwards';
     setTimeout(() => toast.remove(), 300);
@@ -102,7 +104,7 @@ function showToast(msg, type = 'success') {
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('pt-BR');
+  return d.toLocaleDateString(getDateLocale());
 }
 
 function today() {
@@ -114,6 +116,7 @@ function render() {
   updateSidebar();
   updateTopbar();
   renderView();
+  translateDOM(document.body);
 }
 
 function updateSidebar() {
@@ -381,7 +384,7 @@ function renderRatingAreas(ex, exData) {
       ${ex.areas.map(area => {
         const val = areas[area] || 0;
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-area="${area}">
             <div class="rating-area-label">${area}</div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -503,7 +506,7 @@ function renderValuesAlignment(ex) {
       ${selected.map(v => {
         const val = alignment[v] || 0;
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-value="${v}">
             <div class="rating-area-label">${v}</div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -670,7 +673,7 @@ function renderFinalRating(ex, exData) {
   const areas = exData.areas || {};
   const initialAreas = (state.exercises['1.1'] || {}).areas || {};
   return `
-    <div>
+    <div id="final-rating-${ex.id}">
       <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text3)">
         💡 Compare com sua avaliação inicial no Módulo 1
       </div>
@@ -681,10 +684,10 @@ function renderFinalRating(ex, exData) {
         const diffStr = diff > 0 ? `+${diff}` : diff < 0 ? `${diff}` : '=';
         const diffColor = diff > 0 ? 'var(--success)' : diff < 0 ? 'var(--danger)' : 'var(--text3)';
         return `
-          <div class="rating-area">
+          <div class="rating-area" data-area="${area}">
             <div class="rating-area-label">
               ${area}
-              ${initial > 0 ? `<span style="font-size:11px;color:${diffColor};margin-left:8px">${diffStr} (era ${initial})</span>` : ''}
+              ${initial > 0 ? `<span class="final-rating-comparison" style="font-size:11px;color:${diffColor};margin-left:8px">${diffStr} (era ${initial})</span>` : ''}
             </div>
             <div class="rating-dots">
               ${[1,2,3,4,5,6,7,8,9,10].map(n => `
@@ -918,8 +921,7 @@ function setRatingArea(exId, area, val) {
   const container = document.getElementById(`rating-areas-${exId}`);
   if (container) {
     container.querySelectorAll('.rating-area').forEach(row => {
-      const label = row.querySelector('.rating-area-label').textContent;
-      if (label === area) {
+      if (row.dataset.area === area) {
         row.querySelectorAll('.rating-dot').forEach((dot, i) => {
           const n = i + 1;
           dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
@@ -1003,8 +1005,7 @@ function setValueAlignment(v, val) {
   const container = document.getElementById('values-alignment');
   if (container) {
     container.querySelectorAll('.rating-area').forEach(row => {
-      const label = row.querySelector('.rating-area-label').textContent.trim();
-      if (label === v) {
+      if (row.dataset.value === v) {
         row.querySelectorAll('.rating-dot').forEach((dot, i) => {
           const n = i + 1;
           dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
@@ -1061,20 +1062,29 @@ function setFinalRating(exId, area, val) {
   if (!state.exercises[exId].areas) state.exercises[exId].areas = {};
   state.exercises[exId].areas[area] = val;
   saveState();
-  const container = document.getElementById('values-alignment');
-  // Re-render final rating dots
-  document.querySelectorAll('.rating-area').forEach(row => {
-    const labelEl = row.querySelector('.rating-area-label');
-    if (!labelEl) return;
-    const labelText = labelEl.textContent.replace(/\+\d+.*$/, '').replace(/-\d+.*$/, '').replace(/=.*$/, '').trim();
-    if (labelText === area) {
-      row.querySelectorAll('.rating-dot').forEach((dot, i) => {
-        const n = i + 1;
-        dot.className = `rating-dot ${val === n ? 'selected' : ''}`;
-        dot.style.cssText = val === n ? `background:${getColorForValue(n)};border-color:${getColorForValue(n)};color:#fff;` : '';
-      });
-    }
+  const container = document.getElementById(`final-rating-${exId}`);
+  const row = container && Array.from(container.querySelectorAll('.rating-area'))
+    .find(item => item.dataset.area === area);
+  if (!row) return;
+
+  row.querySelectorAll('.rating-dot').forEach((dot, i) => {
+    const selected = val === i + 1;
+    dot.className = selected ? 'rating-dot selected' : 'rating-dot';
+    dot.style.cssText = selected
+      ? `background:${getColorForValue(val)};border-color:${getColorForValue(val)};color:#fff;`
+      : '';
   });
+
+  const initial = ((state.exercises['1.1'] || {}).areas || {})[area] || 0;
+  const comparison = row.querySelector('.final-rating-comparison');
+  if (comparison && initial > 0) {
+    const diff = val - initial;
+    comparison.textContent = `${diff > 0 ? '+' : diff < 0 ? '' : '='}${diff} (era ${initial})`;
+    translateDOM(comparison.parentElement);
+    comparison.style.color = diff > 0
+      ? 'var(--success)'
+      : diff < 0 ? 'var(--danger)' : 'var(--text3)';
+  }
 }
 
 function setFinalReflection(exId, val) {
@@ -1200,6 +1210,68 @@ function closeSetupModal() {
   document.getElementById('setup-modal').classList.remove('open');
 }
 
+// ===== WELCOME ONBOARDING MODAL =====
+let currentWelcomeSlide = 1;
+const totalWelcomeSlides = 3;
+
+function openWelcomeModal() {
+  currentWelcomeSlide = 1;
+  showWelcomeSlide(1);
+  const modal = document.getElementById('welcome-modal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeWelcomeModal() {
+  const modal = document.getElementById('welcome-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function showWelcomeSlide(slideNum) {
+  currentWelcomeSlide = slideNum;
+  document.querySelectorAll('.welcome-slide').forEach((el, idx) => {
+    el.classList.toggle('active', idx + 1 === slideNum);
+  });
+  document.querySelectorAll('.welcome-dot').forEach((dot, idx) => {
+    dot.classList.toggle('active', idx + 1 === slideNum);
+  });
+}
+
+function nextWelcomeSlide() {
+  if (currentWelcomeSlide < totalWelcomeSlides) {
+    showWelcomeSlide(currentWelcomeSlide + 1);
+  } else {
+    state.welcomeDone = true;
+    saveState();
+    closeWelcomeModal();
+    openSetupModal();
+  }
+}
+
+function resetJourney() {
+  const confirmed = window.confirm(translateText(
+    'Isso apagará seu perfil, respostas, progresso, práticas, conquistas e XP deste dispositivo. Esta ação não pode ser desfeita. Deseja reiniciar a jornada?'
+  ));
+  if (!confirmed) return;
+
+  try {
+    localStorage.removeItem(STATE_KEY);
+    localStorage.removeItem(ACHIEVEMENTS_KEY);
+  } catch (error) {
+    showToast('Não foi possível apagar os dados da jornada. Tente novamente.', 'info');
+    console.error('Falha ao reiniciar a jornada:', error);
+    return;
+  }
+
+  state = getDefaultState();
+  achievements = loadAchievements();
+  document.getElementById('setup-name').value = '';
+  document.getElementById('setup-date').value = '';
+  document.getElementById('setup-intention').value = '';
+  render();
+  showToast('Jornada reiniciada.');
+  setTimeout(openWelcomeModal, 500);
+}
+
 function saveSetup() {
   const name = document.getElementById('setup-name').value.trim();
   const date = document.getElementById('setup-date').value;
@@ -1269,8 +1341,10 @@ function init() {
         </div>`;
     }).join('')}`;
 
-  // Auto-open setup if not done
-  if (!state.setupDone) {
+  // Auto-open welcome if not done, otherwise setup if not done
+  if (!state.welcomeDone) {
+    setTimeout(openWelcomeModal, 500);
+  } else if (!state.setupDone) {
     setTimeout(openSetupModal, 500);
   }
 
