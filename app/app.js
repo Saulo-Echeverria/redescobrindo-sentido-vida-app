@@ -294,6 +294,16 @@ function renderModuleView() {
     state.moduleDates[m.id].start = today();
     saveState();
   }
+
+  // Render Mima Cognitive Guide
+  let mimaContainer = document.getElementById('mima-container');
+  if (!mimaContainer) {
+    mimaContainer = document.createElement('div');
+    mimaContainer.id = 'mima-container';
+    container.appendChild(mimaContainer);
+  }
+  mimaContainer.innerHTML = renderMimaWidget();
+  translateDOM(mimaContainer);
 }
 
 function renderConcept(m) {
