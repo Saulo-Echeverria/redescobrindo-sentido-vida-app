@@ -112,10 +112,11 @@ function renderMimaWidget(m) {
     <div class="mima-card" style="background:var(--card-bg, #1a1a2e); border:1px solid rgba(108,99,255,0.3); border-radius:14px; padding:16px; margin:0 0 20px 0; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <div style="width:32px; height:32px; border-radius:50%; background:var(--accent, #6C63FF); display:flex; align-items:center; justify-content:center; font-size:16px;">🧠</div>
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--accent, #6C63FF); display:flex; align-items:center; justify-content:center; font-size:16px;">⭐</div>
           <div>
-            <div style="font-weight:700; font-size:14px; color:var(--text, #fff);">Super Mima <span style="font-size:11px; font-weight:400; color:var(--text3, #a0a0c0);">— Guia Cognitiva 2.0</span></div>
-            <div style="font-size:12px; color:var(--text2, #ccc);" id="mima-speech">Selecione o exercício e toque em uma dúvida.</div>
+            <div style="font-weight:700; font-size:14px; color:var(--text, #fff);">⭐ Mima</div>
+            <div style="font-size:11px; font-weight:400; color:var(--text3, #a0a0c0);">Sua Estrela do Norte na Jornada</div>
+            <div style="font-size:12px; color:var(--text2, #ccc); margin-top:4px;" id="mima-speech">Selecione o exercício e toque em uma dúvida.</div>
           </div>
         </div>
         ${exercises.length ? `
