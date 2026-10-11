@@ -294,16 +294,6 @@ function renderModuleView() {
     state.moduleDates[m.id].start = today();
     saveState();
   }
-
-  // Render Mima Cognitive Guide
-  let mimaContainer = document.getElementById('mima-container');
-  if (!mimaContainer) {
-    mimaContainer = document.createElement('div');
-    mimaContainer.id = 'mima-container';
-    container.appendChild(mimaContainer);
-  }
-  mimaContainer.innerHTML = renderMimaWidget();
-  translateDOM(mimaContainer);
 }
 
 function renderConcept(m) {
@@ -332,7 +322,8 @@ function renderConcept(m) {
 
 function renderExercises(m) {
   const el = document.getElementById('mod-exercises');
-  el.innerHTML = m.exercises.map((ex, idx) => {
+  let html = renderMimaWidget(m);
+  html += m.exercises.map((ex, idx) => {
     const isOpen = idx === 0;
     return `
       <div class="exercise-card ${isOpen ? 'open' : ''}" id="ex-card-${ex.id}">
@@ -347,6 +338,8 @@ function renderExercises(m) {
         </div>
       </div>`;
   }).join('');
+  el.innerHTML = html;
+  translateDOM(el);
 }
 
 function renderExerciseBody(ex, m) {
