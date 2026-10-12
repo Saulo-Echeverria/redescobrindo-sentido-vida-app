@@ -64,7 +64,6 @@ function evaluateUserState(intent) {
     engaged: SESSION_MEMORY.interactionCount > 3 || USER_MODEL.engagement > 60,
     seekingReflection: intent === 'quero_refletir' || USER_MODEL.reflectionDepth > 40,
     seekingAction: intent === 'quero_agir',
-    exerciseSelected: !!selectedMimaExerciseId,
     journey: getUserJourney()
   };
 }
@@ -77,34 +76,21 @@ function chooseStrategy(userState, intent) {
   return "reflect";
 }
 
-function buildResponseForStrategy(strategy, mod, ex) {
+function buildResponseForStrategy(strategy, mod) {
   const modTitle = mod ? mod.title : "deste módulo";
-  const exTitle = ex ? ex.title : "deste exercício";
 
   switch (strategy) {
     case "simplify":
-      if (ex && ex.description) {
-        return `Não busque perfeição. Observe apenas como ${exTitle.toLowerCase()} se aplica na sua rotina.`;
-      }
       return `Não existe resposta perfeita. Observe sua experiência real de forma simples.`;
 
     case "clarify":
-      if (ex) {
-        return `O objetivo de ${exTitle} é ajudar a perceber padrões reais de significado.`;
-      }
       return `Este passo ajuda a organizar suas reflexões sobre ${modTitle.toLowerCase()} com clareza.`;
 
     case "deepen":
     case "reflect":
-      if (ex) {
-        return `O que mais chamou sua atenção no exercício ${exTitle}?`;
-      }
       return `Qual valor ou aprendizado de ${modTitle} ressoa mais com você hoje?`;
 
     case "act":
-      if (ex) {
-        return `Qual pequeno passo prático do exercício ${exTitle} depende apenas de você hoje?`;
-      }
       return `Qual micro-atitude simples você pode praticar ainda esta semana?`;
 
     default:
@@ -115,17 +101,14 @@ function buildResponseForStrategy(strategy, mod, ex) {
 function generateMimaReply(intent) {
   const modId = (typeof state !== 'undefined' && state.currentModule) ? state.currentModule : 1;
   SESSION_MEMORY.currentModule = modId;
-  SESSION_MEMORY.currentExercise = selectedMimaExerciseId;
   SESSION_MEMORY.lastIntent = intent;
   SESSION_MEMORY.interactionCount++;
 
   const userState = evaluateUserState(intent);
   const strategy = chooseStrategy(userState, intent);
-
   const mod = getProgramDataModule(modId);
-  const ex = selectedMimaExerciseId ? getProgramDataExercise(modId, selectedMimaExerciseId) : (mod && mod.exercises ? mod.exercises[0] : null);
 
-  let reply = buildResponseForStrategy(strategy, mod, ex);
+  let reply = buildResponseForStrategy(strategy, mod);
 
   // Enforce max 20 words constraint
   const words = reply.split(/\s+/);
@@ -148,25 +131,7 @@ function generateMimaReply(intent) {
   return reply;
 }
 
-let selectedMimaExerciseId = null;
-
-function onMimaExerciseChange(exId) {
-  selectedMimaExerciseId = exId || null;
-  SESSION_MEMORY.currentExercise = selectedMimaExerciseId;
-  const speechEl = document.getElementById('mima-speech');
-  if (speechEl) {
-    if (exId) {
-      const ex = getProgramDataExercise((typeof state !== 'undefined' && state.currentModule) ? state.currentModule : 1, exId);
-      speechEl.textContent = ex ? `Focando em: ${ex.title}. Toque em uma dúvida.` : `Focando no Exercício ${exId}.`;
-    } else {
-      speechEl.textContent = "Selecione o exercício e toque em uma dúvida.";
-    }
-  }
-}
-
 function renderMimaWidget(m) {
-  const exercises = m && m.exercises ? m.exercises : [];
-  selectedMimaExerciseId = null;
   return `
     <div class="mima-card" style="background:var(--card-bg, #1a1a2e); border:1px solid rgba(108,99,255,0.3); border-radius:14px; padding:16px; margin:0 0 20px 0; box-shadow:0 4px 20px rgba(0,0,0,0.2);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
@@ -175,17 +140,9 @@ function renderMimaWidget(m) {
           <div>
             <div style="font-weight:700; font-size:14px; color:var(--text, #fff);">⭐ Mima</div>
             <div style="font-size:11px; font-weight:400; color:var(--text3, #a0a0c0);">Sua Estrela do Norte na Jornada</div>
-            <div style="font-size:12px; color:var(--text2, #ccc); margin-top:4px;" id="mima-speech">Selecione o exercício e toque em uma dúvida.</div>
+            <div style="font-size:12px; color:var(--text2, #ccc); margin-top:4px;" id="mima-speech">Como posso ajudar na sua reflexão agora?</div>
           </div>
         </div>
-        ${exercises.length ? `
-          <div>
-            <select id="mima-exercise-select" class="form-control" style="font-size:11px; padding:6px 10px; height:auto; background:var(--bg2, #12121e); color:var(--text, #fff); border-radius:8px; border:1px solid rgba(108,99,255,0.3);" onchange="onMimaExerciseChange(this.value)">
-              <option value="">🎯 Exercício Geral do Módulo</option>
-              ${exercises.map(ex => `<option value="${ex.id}">Exercício ${ex.id}: ${ex.title}</option>`).join('')}
-            </select>
-          </div>
-        ` : ''}
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;">
         <button class="btn btn-ghost" style="font-size:12px; padding:6px 12px; border-radius:8px;" onclick="triggerMima('nao_entendi')">🤔 Não entendi</button>
