@@ -1,4 +1,5 @@
-// ===== SUPER MIMA 2.0: Motor de Reflexão Contextual =====
+// ===== SUPER MIMA 3.0: Motor Cognitivo & Estratégico =====
+
 const SHORT_MEMORY = {
   lastResponses: [],
   maxResponses: 5
@@ -12,6 +13,14 @@ const SESSION_MEMORY = {
   visitedExercises: []
 };
 
+const USER_MODEL = {
+  engagement: 50,
+  confusion: 0,
+  autonomy: 50,
+  reflectionDepth: 10,
+  persistence: 50
+};
+
 function getProgramDataModule(modId) {
   if (typeof PROGRAM_DATA === 'undefined' || !PROGRAM_DATA.modules) return null;
   return PROGRAM_DATA.modules.find(m => m.id === Number(modId)) || PROGRAM_DATA.modules[0];
@@ -23,62 +32,112 @@ function getProgramDataExercise(modId, exId) {
   return mod.exercises.find(ex => ex.id === exId) || mod.exercises[0];
 }
 
+function getUserJourney() {
+  const total = typeof getTotalProgress === 'function' ? getTotalProgress() : { done: 0, total: 10, pct: 0 };
+  const doneModules = (typeof state !== 'undefined' && state.moduleStatus) ?
+    Object.values(state.moduleStatus).filter(s => s === 'done').length : 0;
+  return {
+    modulesCompletedCount: doneModules,
+    totalProgressPct: total.pct,
+    currentModuleId: (typeof state !== 'undefined' && state.currentModule) ? state.currentModule : 1
+  };
+}
+
+function evaluateUserState(intent) {
+  if (intent === 'nao_entendi') {
+    USER_MODEL.confusion = Math.min(100, USER_MODEL.confusion + 25);
+    USER_MODEL.reflectionDepth = Math.max(0, USER_MODEL.reflectionDepth - 10);
+  } else if (intent === 'explique_melhor') {
+    USER_MODEL.confusion = Math.max(0, USER_MODEL.confusion - 10);
+  } else if (intent === 'quero_refletir') {
+    USER_MODEL.confusion = Math.max(0, USER_MODEL.confusion - 15);
+    USER_MODEL.reflectionDepth = Math.min(100, USER_MODEL.reflectionDepth + 20);
+    USER_MODEL.engagement = Math.min(100, USER_MODEL.engagement + 10);
+  } else if (intent === 'quero_agir') {
+    USER_MODEL.autonomy = Math.min(100, USER_MODEL.autonomy + 15);
+    USER_MODEL.persistence = Math.min(100, USER_MODEL.persistence + 15);
+    USER_MODEL.engagement = Math.min(100, USER_MODEL.engagement + 10);
+  }
+
+  return {
+    confused: USER_MODEL.confusion >= 40 || intent === 'nao_entendi',
+    engaged: SESSION_MEMORY.interactionCount > 3 || USER_MODEL.engagement > 60,
+    seekingReflection: intent === 'quero_refletir' || USER_MODEL.reflectionDepth > 40,
+    seekingAction: intent === 'quero_agir',
+    exerciseSelected: !!selectedMimaExerciseId,
+    journey: getUserJourney()
+  };
+}
+
+function chooseStrategy(userState, intent) {
+  if (userState.confused) return "simplify";
+  if (intent === 'explique_melhor') return "clarify";
+  if (intent === 'quero_agir' || userState.seekingAction) return "act";
+  if (intent === 'quero_refletir' || userState.engaged) return "deepen";
+  return "reflect";
+}
+
+function buildResponseForStrategy(strategy, mod, ex) {
+  const modTitle = mod ? mod.title : "deste módulo";
+  const exTitle = ex ? ex.title : "deste exercício";
+
+  switch (strategy) {
+    case "simplify":
+      if (ex && ex.description) {
+        return `Não busque perfeição. Observe apenas como ${exTitle.toLowerCase()} se aplica na sua rotina.`;
+      }
+      return `Não existe resposta perfeita. Observe sua experiência real de forma simples.`;
+
+    case "clarify":
+      if (ex) {
+        return `O objetivo de ${exTitle} é ajudar a perceber padrões reais de significado.`;
+      }
+      return `Este passo ajuda a organizar suas reflexões sobre ${modTitle.toLowerCase()} com clareza.`;
+
+    case "deepen":
+    case "reflect":
+      if (ex) {
+        return `O que mais chamou sua atenção no exercício ${exTitle}?`;
+      }
+      return `Qual valor ou aprendizado de ${modTitle} ressoa mais com você hoje?`;
+
+    case "act":
+      if (ex) {
+        return `Qual pequeno passo prático do exercício ${exTitle} depende apenas de você hoje?`;
+      }
+      return `Qual micro-atitude simples você pode praticar ainda esta semana?`;
+
+    default:
+      return `Observe sua experiência com curiosidade e sem julgamentos.`;
+  }
+}
+
 function generateMimaReply(intent) {
-  const modId = state.currentModule || 1;
+  const modId = (typeof state !== 'undefined' && state.currentModule) ? state.currentModule : 1;
   SESSION_MEMORY.currentModule = modId;
   SESSION_MEMORY.currentExercise = selectedMimaExerciseId;
   SESSION_MEMORY.lastIntent = intent;
   SESSION_MEMORY.interactionCount++;
 
+  const userState = evaluateUserState(intent);
+  const strategy = chooseStrategy(userState, intent);
+
   const mod = getProgramDataModule(modId);
   const ex = selectedMimaExerciseId ? getProgramDataExercise(modId, selectedMimaExerciseId) : (mod && mod.exercises ? mod.exercises[0] : null);
 
-  let reply = "";
+  let reply = buildResponseForStrategy(strategy, mod, ex);
 
-  if (intent === 'nao_entendi') {
-    if (ex && ex.description) {
-      reply = `Observe situações reais da sua vida relacionadas a: ${ex.title.toLowerCase()}.`;
-    } else if (mod && mod.concept) {
-      reply = `Pense no conceito de ${mod.concept.title.toLowerCase()} no seu dia a dia.`;
-    } else {
-      reply = "Não existe resposta perfeita. Existe apenas sua experiência real.";
-    }
-  } else if (intent === 'explique_melhor') {
-    if (ex && ex.description) {
-      reply = `Este exercício (${ex.title}) ajuda você a perceber padrões e significados práticos.`;
-    } else if (mod) {
-      reply = `O objetivo deste módulo é explorar ${mod.title.toLowerCase()} com honestidade.`;
-    } else {
-      reply = "Este passo foi desenhado para organizar suas reflexões de forma simples.";
-    }
-  } else if (intent === 'quero_refletir') {
-    if (ex && ex.title) {
-      reply = `O que mais chamou sua atenção no exercício ${ex.title}?`;
-    } else if (mod && mod.concept) {
-      reply = `Qual valor ou aprendizado deste módulo ressoa mais com você?`;
-    } else {
-      reply = "O que essa questão revela sobre as suas prioridades atuais?";
-    }
-  } else if (intent === 'quero_agir') {
-    if (ex && ex.title) {
-      reply = `Qual pequeno passo prático depende apenas de você hoje?`;
-    } else {
-      reply = `Escolha uma atitude simples para aplicar ainda esta semana.`;
-    }
-  } else {
-    reply = "Observe sua experiência com curiosidade e sem julgamentos.";
-  }
-
-  // Word limit (max 20 words)
+  // Enforce max 20 words constraint
   const words = reply.split(/\s+/);
   if (words.length > 20) {
     reply = words.slice(0, 18).join(' ') + '...';
   }
 
-  // Avoid repetition using short memory
+  // Short memory deduplication
   if (SHORT_MEMORY.lastResponses.includes(reply)) {
-    if (intent === 'quero_refletir') reply = "Como você aplicaria essa reflexão na sua rotina amanhã?";
-    else if (intent === 'quero_agir') reply = "Qual micro-ação você pode fazer em 5 minutos?";
+    if (strategy === "deepen") reply = "Como você aplicaria essa reflexão na sua rotina amanhã?";
+    else if (strategy === "act") reply = "Qual micro-ação você pode fazer em apenas 5 minutos?";
+    else reply = "Foque na sua experiência com honestidade e sem pressão.";
   }
 
   SHORT_MEMORY.lastResponses.push(reply);
@@ -97,7 +156,7 @@ function onMimaExerciseChange(exId) {
   const speechEl = document.getElementById('mima-speech');
   if (speechEl) {
     if (exId) {
-      const ex = getProgramDataExercise(state.currentModule || 1, exId);
+      const ex = getProgramDataExercise((typeof state !== 'undefined' && state.currentModule) ? state.currentModule : 1, exId);
       speechEl.textContent = ex ? `Focando em: ${ex.title}. Toque em uma dúvida.` : `Focando no Exercício ${exId}.`;
     } else {
       speechEl.textContent = "Selecione o exercício e toque em uma dúvida.";
